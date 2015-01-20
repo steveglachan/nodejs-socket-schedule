@@ -8,7 +8,8 @@ var app = express();
 var server = http.createServer( app );
 var io = socket.listen( server );
 
-/* Schedule load of JSON data file and push to clients: */
+/* Schedule load of JSON data file and push to clients. */
+// See: https://github.com/mattpat/node-schedule
 var j = schedule.scheduleJob('* * * * *', function(){
 	loadScheduledData();
 });
@@ -16,6 +17,7 @@ var j = schedule.scheduleJob('* * * * *', function(){
 io.sockets.on( 'connection', function( client ) {
 	console.log( "New client !", client.client.id);
 	io.sockets.emit( 'scheduled_message', { name: "New Client Connected", message: "Welcome new client." } );
+	
 	loadScheduledData();
 
 	client.on( 'message', function( data ) {

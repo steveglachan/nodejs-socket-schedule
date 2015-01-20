@@ -1,1 +1,1 @@
-{ "name": "Scheduled", "message": "[Message from server send via scheduled job. Example: C21 TV Schedule]" }
+{ "name": "Scheduled", "message": "[Message from server send via scheduled job.]" }
