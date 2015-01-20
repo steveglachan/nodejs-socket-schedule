@@ -1,4 +1,5 @@
-var socket = io.connect( 'http://localhost:8080' );
+// Change to appropriate URL (E.g. http://localhost:8080)
+var socket = io.connect( 'http://sg.testing:8080' );
 
 $( "#messageForm" ).submit( function() {
 	var nameVal = $( "#nameInput" ).val();
@@ -29,6 +30,7 @@ socket.on( 'scheduled_message', function( data ) {
 	
 	$( "#scheduled_messages" ).html( content );
 });
+
 
 
 /* UTILITY FUNCTIONS */

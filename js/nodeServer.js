@@ -24,6 +24,11 @@ io.sockets.on( 'connection', function( client ) {
 		console.log( 'Message received ' + data.name + ":" + data.message );
 		io.sockets.emit( 'message', { name: data.name, message: data.message } );
 	});
+
+	client.on('disconnect', function() {
+		console.info("Client disconnected.");
+		io.sockets.emit( 'scheduled_message', { name: "Client Disconnected", message: "A client has disconnected." } );
+	});
 });
 
 server.listen( 8080 );
