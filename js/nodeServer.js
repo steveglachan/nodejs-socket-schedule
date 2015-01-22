@@ -20,10 +20,9 @@ io.sockets.on( 'connection', function( client ) {
 	client.on('join_room', function(room) {
 		client.join(room);
 		io.sockets.to(room).emit( 'scheduled_message', { name: "Room Joined", message: room } );
-
 		if( room == 'display-units') {
 			// Force load scheduled data initially, emitted to 'display-untis' clients only:	
-			loadScheduledData();
+			loadScheduledData(client.id);
 		}
 	})
 
@@ -49,7 +48,7 @@ io.sockets.on( 'connection', function( client ) {
 	JSON Data Loading
 */
 
-function loadScheduledData() {
+function loadScheduledData(clientId) {
 	var dataFile = '../data/scheduled-message.json';
 	var data = {};
 	fs.readFile(dataFile, 'utf8', function (err, data) {
@@ -59,7 +58,15 @@ function loadScheduledData() {
 		}
 		else {
 			data = JSON.parse(data);
-			io.sockets.in('display-units').emit( 'scheduled_message', data );
+			if( typeof clientId != 'undefined' ) {
+				// Send to specific client/socket
+				io.to(clientId).emit( 'scheduled_message', { name: "Initial Data Send", message: "Unscheduled data sent to client for initialisation." } );
+			}
+			else {
+				// Send to all display-units clients/sockets
+				io.sockets.in('display-units').emit( 'scheduled_message', data );
+			}
+			
 		}
 	});
 };
