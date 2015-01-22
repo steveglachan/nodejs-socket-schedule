@@ -8,7 +8,7 @@ Essentially this is a proof of concept type project and a way for me to start le
 *Quick Start Tips*
 
 1. Install NodeJS: http://nodejs.org/download/
-  1.Note: You may need to restart your PC if you are installing on Windows
+  1. Note: You may need to restart your PC if you are installing on Windows
 2. Node module have been included in this repo but to install them using NPM. These commands will install the modules in a 'node-modules' directory under the directly you are running the command in.
   1. Socket.io: `> npm install socket.io`
   2. Express: `> npm install express`
