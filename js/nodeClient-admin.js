@@ -1,8 +1,8 @@
 // Change to appropriate URL (E.g. http://localhost:8080)
 var socket = io.connect( 'http://sg.testing:8080' );
 
-// Join 'display units' client room:
-socket.emit('join_room', 'display-units');
+// Join 'admins' client room:
+socket.emit('join_room', 'admins');
 
 socket.on( 'message', function( data ) {
 	var actualContent = $( "#messages" ).html();
@@ -25,6 +25,9 @@ $( "#messageForm" ).submit( function() {
 	var msg = $( "#messageInput" ).val();
 		
 	socket.emit( 'message', { name: nameVal, message: msg } );
+
+	// Trigger push of data to display-units Clients after form data save:
+	socket.emit( 'data_update', { name: "Data Update!", message: "Updated data packet from Admin changes." } );
 
 	$( "#nameInput" ).val("");
 	$( "#messageInput" ).val(""); 

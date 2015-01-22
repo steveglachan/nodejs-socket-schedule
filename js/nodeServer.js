@@ -8,21 +8,35 @@ var app = express();
 var server = http.createServer( app );
 var io = socket.listen( server );
 
-/* Schedule load of JSON data file and push to clients. */
-// See: https://github.com/mattpat/node-schedule
-var j = schedule.scheduleJob('* * * * *', function(){
-	loadScheduledData();
-});
+/*
+	Web Socket Management
+*/
+
+server.listen( 8080 );
 
 io.sockets.on( 'connection', function( client ) {
-	console.log( "New client !", client.client.id);
-	io.sockets.emit( 'scheduled_message', { name: "New Client Connected", message: "Welcome new client." } );
-	
-	loadScheduledData();
 
-	client.on( 'message', function( data ) {
-		console.log( 'Message received ' + data.name + ":" + data.message );
-		io.sockets.emit( 'message', { name: data.name, message: data.message } );
+	// Join Room:
+	client.on('join_room', function(room) {
+		client.join(room);
+		io.sockets.to(room).emit( 'scheduled_message', { name: "Room Joined", message: room } );
+
+		if( room == 'display-units') {
+			// Force load scheduled data initially, emitted to 'display-untis' clients only:	
+			loadScheduledData();
+		}
+	})
+
+	// Room specific messages; display the message to other Clients in the same room:
+	client.in(client.rooms[0]).on( 'message', function( data ) {
+		console.log( 'Message received ' + data.name + ":" + data.message + ". Room: " + client.rooms[0] );
+		io.sockets.to(client.rooms[0]).emit( 'message', data );
+	});
+
+	// Push data to Clients (display-units) once an Admin has made changes (posted a message in this case):
+	client.in('admins').on( 'data_update', function(data) {
+		console.log("Client Data Update", data);
+		io.sockets.to('display-units').emit( 'scheduled_message', data );
 	});
 
 	client.on('disconnect', function() {
@@ -31,10 +45,9 @@ io.sockets.on( 'connection', function( client ) {
 	});
 });
 
-server.listen( 8080 );
-
-
-/* UTILITY FUNCTIONS */
+/*
+	JSON Data Loading
+*/
 
 function loadScheduledData() {
 	var dataFile = '../data/scheduled-message.json';
@@ -46,7 +59,15 @@ function loadScheduledData() {
 		}
 		else {
 			data = JSON.parse(data);
-			io.sockets.emit( 'scheduled_message', data );
+			io.sockets.in('display-units').emit( 'scheduled_message', data );
 		}
 	});
 };
+
+/*
+	Schedule load of JSON data file and push to clients.
+	See: https://github.com/mattpat/node-schedule
+*/
+var j = schedule.scheduleJob('* * * * *', function(){
+	loadScheduledData();
+});
