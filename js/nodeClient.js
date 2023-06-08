@@ -1,5 +1,5 @@
-// Change to appropriate URL (E.g. http://localhost:8080)
-var socket = io.connect( 'http://sg.testing:8080' );
+// Change to appropriate URL (E.g. https://localhost:2121)
+var socket = io.connect( 'https://changeme.local:2121' );
 
 // Join 'display units' client room:
 socket.emit('join_room', 'display-units');
