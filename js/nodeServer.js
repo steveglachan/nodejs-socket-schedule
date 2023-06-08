@@ -1,18 +1,34 @@
-var socket = require( 'socket.io' );
-var express = require( 'express' );
-var http = require( 'http' );
-var fs = require( 'fs' );
-var schedule = require('node-schedule');
+/* [DEPRECATED] */
+// Using Express and HTTP:
+//const http = require( 'http' );
+//const socket = require( 'socket.io' );
+//const express = require( 'express' );
+//const app = express();
+//const server = http.createServer( app );
+//const io = socket.listen( server );
+//server.listen( 8080 );
+/* [END DEPRECATED] */
 
-var app = express();
-var server = http.createServer( app );
-var io = socket.listen( server );
+const fs = require( 'fs' );
+const schedule = require('node-schedule');
+
+/* Set up HTTPS: */
+const https = require( 'https' );
+const serverPort = 2121;
+const options = {
+	pfx: fs.readFileSync('./cert/my_cert.pfx'), // (Local, self-signed. Not included in this repo.)
+	passphrase: 'changethis'
+};
+const server = https.createServer(options);
+const io = require('socket.io')(server);
+
+server.listen( serverPort, function() {
+  console.log('Server up and running at %s port', serverPort);
+});
 
 /*
-	Web Socket Management
+Web Socket Management
 */
-
-server.listen( 8080 );
 
 io.sockets.on( 'connection', function( client ) {
 
@@ -45,7 +61,7 @@ io.sockets.on( 'connection', function( client ) {
 });
 
 /*
-	JSON Data Loading
+JSON Data Loading
 */
 
 function loadScheduledData(clientId) {
