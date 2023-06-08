@@ -1,4 +1,4 @@
-Integration test between NodeJS, ~~Express~~, Socket.io and a node-schedule module.
+PROOF OF CONCEPT integration test between NodeJS, ~~Express~~, Socket.io and a node-schedule module.
 
 This is just a simple (test) application, showing off chat-like functionality along with scheduled pushing of data from server to client(s).
 NodeJS is used for realtime refresh.
